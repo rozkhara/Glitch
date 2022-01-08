@@ -32,6 +32,7 @@ public class RandomLoot : MonoBehaviour
     public int randomNumber;
     public int type;
     private GM gameManager;
+    private Inventory inventoryManager;
 
 
     // Start is called before the first frame update
@@ -66,6 +67,7 @@ public class RandomLoot : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.Find("GMobject").GetComponent<GM>();
+        inventoryManager = GameObject.Find("Invobject").GetComponent<Inventory>();
     }
 
     // Update is called once per frame
@@ -99,6 +101,23 @@ public class RandomLoot : MonoBehaviour
                 if (randomNumber <= weight)
                 {
                     //give item
+                    Item targetItem = new Item();
+                    if (weight == 60)
+                    {
+                        targetItem.type = Item.Type.Potion10;
+                        targetItem.amount = 1;
+                    }
+                    else if (weight == 30)
+                    {
+                        targetItem.type = Item.Type.Teleport;
+                        targetItem.amount = 1;
+                    }
+                    else if (weight == 10)
+                    {
+                        targetItem.type = Item.Type.Potion30;
+                        targetItem.amount = 1;
+                    }
+                    inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
                     Destroy(this.gameObject);
@@ -125,6 +144,23 @@ public class RandomLoot : MonoBehaviour
                 if (randomNumber <= weight)
                 {
                     //give item
+                    Item targetItem = new Item();
+                    if (weight == 60)
+                    {
+                        targetItem.type = Item.Type.Potion30;
+                        targetItem.amount = 2;
+                    }
+                    else if (weight == 30)
+                    {
+                        targetItem.type = Item.Type.BuffPotion;
+                        targetItem.amount = 1;
+                    }
+                    else if (weight == 10)
+                    {
+                        targetItem.type = Item.Type.Potion50;
+                        targetItem.amount = 1;
+                    }
+                    inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
                     Destroy(this.gameObject);
@@ -150,6 +186,23 @@ public class RandomLoot : MonoBehaviour
                 if (randomNumber <= weight)
                 {
                     //give item
+                    Item targetItem = new Item();
+                    if (weight == 60)
+                    {
+                        targetItem.type = Item.Type.Potion50;
+                        targetItem.amount = 2;
+                    }
+                    else if (weight == 30)
+                    {
+                        targetItem.type = Item.Type.BuffPotion;
+                        targetItem.amount = 2;
+                    }
+                    else if (weight == 10)
+                    {
+                        targetItem.type = Item.Type.Teleport;
+                        targetItem.amount = 2;
+                    }
+                    inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
                     Destroy(this.gameObject);

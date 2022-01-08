@@ -18,7 +18,7 @@ public class crateSpawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
+        
         if(Input.GetKeyDown(KeyCode.I)){
             gameManager.ClearTimeCheckEnd();
             //if clearTime under something time
@@ -35,7 +35,7 @@ public class crateSpawn : MonoBehaviour
                 Instantiate(Crates[0], transform.position, Quaternion.identity);
             }
         }
-        */
+        
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item
+public class Item 
 {
-    public enum ItemType
+    public enum Type
     {
-        HealthPotion,
-        BuffPotion,
+        Potion10,
+        Potion30,
+        Potion50,
         Teleport,
         MaxHealthUp,
+        BuffPotion
     }
-
-    public ItemType itemType;
     public int amount;
+    public Type type;
+
 }

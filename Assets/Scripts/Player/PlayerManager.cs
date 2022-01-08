@@ -11,12 +11,16 @@ public class PlayerManager : MonoBehaviour
     bool canDash = true;
     Rigidbody2D rigid;
     SpriteRenderer SpriteRenderer;
+
+
     // Start is called before the first frame update
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
+
+
     }
 
     void Start()
