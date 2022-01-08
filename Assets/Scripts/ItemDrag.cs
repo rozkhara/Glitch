@@ -42,7 +42,7 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
         else if (endPos.y <= -60 + 50 && endPos.y >= -60 - 50) i = 2;
         else if (endPos.y <= -180 + 50 && endPos.y >= -180 - 50) i = 3;
         else i = -1;
-        if (i == -1 && j == -1)
+        if (i == -1 || j == -1)
         {
             endIndex = initIndex;
 
