@@ -10,6 +10,8 @@ TagManager:
   - ironCrate
   - goldCrate
   - Ground
+  - InventoryManager
+  - GameManager
   layers:
   - Default
   - TransparentFX

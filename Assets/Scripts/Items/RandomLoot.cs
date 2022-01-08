@@ -66,8 +66,8 @@ public class RandomLoot : MonoBehaviour
 
     void Start()
     {
-        gameManager = GameObject.Find("GMobject").GetComponent<GM>();
-        inventoryManager = GameObject.Find("Invobject").GetComponent<Inventory>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
+        inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
     }
 
     // Update is called once per frame

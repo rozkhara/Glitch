@@ -80,7 +80,7 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
     // Start is called before the first frame update
     void Start()
     {
-        inventoryManager = GameObject.Find("Invobject").GetComponent<Inventory>();
+        inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
     }
 
     // Update is called once per frame

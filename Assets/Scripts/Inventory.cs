@@ -9,8 +9,12 @@ public class Inventory : MonoBehaviour
     public bool[,] isEmpty = { { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true } };
     public int[,] typeArray = new int[4, 6];
     public List<Sprite> sprites;
-    [SerializeField] private GameObject itemSlot;
-
+    private GameObject itemSlot;
+    [SerializeField] private GameObject inventoryAll;
+    private Canvas canvas;
+    private bool isInvOpen;
+    private GameObject instInvObj;
+    private GM gameManager;
 
     public void AddItem(Item item)
     {
@@ -67,10 +71,32 @@ public class Inventory : MonoBehaviour
         Item tempItem = inventoryArray[k, l];
         inventoryArray[k, l] = inventoryArray[i, j];
         inventoryArray[i, j] = tempItem;
-        if (isEmpty[i, j] && !isEmpty[k, l]) isEmpty[k, l] = true; isEmpty[i, j] = false;
-        if (isEmpty[k, l] && !isEmpty[i, j]) isEmpty[k, l] = false; isEmpty[i, j] = true;
+        if (isEmpty[i, j] && !isEmpty[k, l])
+        {
+            isEmpty[k, l] = true;
+            isEmpty[i, j] = false;
+        }
+        else if (isEmpty[k, l] && !isEmpty[i, j])
+        {
+            isEmpty[k, l] = false;
+            isEmpty[i, j] = true;
+        }
     }
+    public void Start()
+    {
+        GameObject tempObject = GameObject.Find("Canvas");
+        if (tempObject != null)
+        {
+            canvas = tempObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                Debug.LogError("Could not locate Canvas component on " + tempObject.name);
+            }
+        }
+        isInvOpen = false;
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
 
+    }
 
     public void Update()
     {
@@ -88,7 +114,28 @@ public class Inventory : MonoBehaviour
             Debug.Log("For Position 0,2, " + inventoryArray[0, 2].type + " " + inventoryArray[0, 2].amount);
         }
         */
-        UpdateSprite();
+        if (isInvOpen)
+        {
+            UpdateSprite();
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                Destroy(instInvObj);
+                gameManager.isOnPause = false;
+                isInvOpen = false;
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                instInvObj = Instantiate(inventoryAll, canvas.transform);
+                gameManager.isOnPause = true;
+                isInvOpen = true;
+                itemSlot = GameObject.Find("ItemSlot");
+            }
+        }
+
+
 
     }
 
@@ -104,26 +151,104 @@ public class Inventory : MonoBehaviour
                     {
                         case Item.Type.Potion10:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[0];
                             break;
                         case Item.Type.Potion30:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[1];
                             break;
                         case Item.Type.Potion50:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[2];
                             break;
                         case Item.Type.Teleport:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[4];
                             break;
                         case Item.Type.MaxHealthUp:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[4];
                             break;
                         case Item.Type.BuffPotion:
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = true;
+                            if (inventoryArray[i, j].amount > 1)
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = inventoryArray[i, j].amount.ToString() + " ";
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().fontSize = 36;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().color = Color.green;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+
+                            }
+                            else
+                            {
+                                itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                            }
                             itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = sprites[5];
                             break;
                         default: break;
@@ -131,6 +256,8 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
+                    itemSlot.transform.GetChild(i * 6 + j).GetChild(0).GetComponent<Text>().text = "";
+                    itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().sprite = null;
                     itemSlot.transform.GetChild(i * 6 + j).GetComponent<Image>().enabled = false;
                 }
             }

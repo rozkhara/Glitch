@@ -11,7 +11,7 @@ public class crateSpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = GameObject.Find("GMobject").GetComponent<GM>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
 
     }
 
@@ -19,7 +19,7 @@ public class crateSpawn : MonoBehaviour
     void Update()
     {
         
-        if(Input.GetKeyDown(KeyCode.I)){
+        if(Input.GetKeyDown(KeyCode.C)){
             gameManager.ClearTimeCheckEnd();
             //if clearTime under something time
             if (gameManager.clearTime <= 30.0f)
