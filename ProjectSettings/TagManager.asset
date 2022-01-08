@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Weapon
   - Monster
+  - woodCrate
+  - ironCrate
+  - goldCrate
   layers:
   - Default
   - TransparentFX
