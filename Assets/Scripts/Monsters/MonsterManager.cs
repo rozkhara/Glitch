@@ -25,12 +25,21 @@ public class MonsterManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
+
     }
 
+    void FixedUpdate()
+    {
+        var monsterPosition = transform.position;
+        var playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+        var norm = (monsterPosition - playerPosition).normalized;
+        if (Vector2.Distance(monsterPosition, playerPosition) <= 2.0f)
+        {
+            Debug.Log("Found");
+            transform.position -= norm * Time.deltaTime;
+        }
+
+    }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,6 +48,11 @@ public class MonsterManager : MonoBehaviour
             Debug.Log("Hit");
             health -= GameObject.FindGameObjectWithTag("Weapon").GetComponentInChildren<WeaponManager>().damage;
             GameObject.FindGameObjectWithTag("Weapon").GetComponentInChildren<WeaponManager>().damage = 0;
+
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

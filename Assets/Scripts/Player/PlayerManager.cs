@@ -9,14 +9,23 @@ public class PlayerManager : MonoBehaviour
     public float maxSpeed;
     public float jumpPower;
     bool canDash = true;
+    bool wasHit = false;
     Rigidbody2D rigid;
+    Animator animator;
     SpriteRenderer SpriteRenderer;
+
+    public float health;
     // Start is called before the first frame update
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+
+        animator.SetBool("isCharging", false);
+        animator.SetBool("isMoving", false);
+        animator.SetBool("isGrounded", true);
     }
 
     void Start()
@@ -29,26 +38,42 @@ public class PlayerManager : MonoBehaviour
     {
         if (!GameManager.isOnPause)
         {
-            //Jump
+            //jump
             if (Input.GetButtonDown("Jump"))
-                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            {
+                //disable double jump
+                if (animator.GetBool("isGrounded"))
+                {
+                    //jump physics
+                    rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
 
-            //Stop Speed
+                    //set isGrounded boolean to false when player jumps
+                    animator.SetBool("isGrounded", false);
+                }
+            }
+
+            //move break
             if (Input.GetButtonUp("Horizontal"))
             {
                 rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
             }
 
-            //Direction Sprite
+            //move
             if (Input.GetButtonDown("Horizontal"))
             {
-                SpriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+                if (!animator.GetBool("isCharging"))
+                    SpriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
             }
 
+            //attack
             if (Input.GetKeyDown(KeyCode.K))
             {
-                //immobile while charging attack
-                maxSpeed = 0;
+                if (!animator.GetBool("isCharging"))
+                {
+                    //immobile while charging attack
+                    maxSpeed = 0;
+                    animator.SetBool("isCharging", true);
+                }
             }
 
             if (Input.GetKey(KeyCode.K))
@@ -66,6 +91,7 @@ public class PlayerManager : MonoBehaviour
                 StartCoroutine(wait());
                 //mobile after finishing attack
                 maxSpeed = 2;
+                animator.SetBool("isCharging", false);
             }
 
             if (Input.GetKeyDown(KeyCode.J))
@@ -84,14 +110,33 @@ public class PlayerManager : MonoBehaviour
                 }
             }
 
+            // if (transform.position.y != 0)
+            // {
 
+            //     animator.SetBool("isGrounded", false);
+            // }
+
+            AnimationUpdate();
 
         }
     }
 
+    void AnimationUpdate()
+    {
+        if (Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0)
+        {
+            animator.SetBool("isMoving", false);
+        }
+        else
+        {
+            animator.SetBool("isMoving", true);
+        }
+
+    }
+
     IEnumerator dashCool()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
         canDash = true;
     }
 
@@ -100,6 +145,12 @@ public class PlayerManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         GameObject.Find("Weapon").GetComponentInChildren<BoxCollider2D>().enabled = false;
         GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage = 0f;
+    }
+
+    IEnumerator invincible()
+    {
+        yield return new WaitForSeconds(2);
+        wasHit = false;
     }
 
 
@@ -113,5 +164,30 @@ public class PlayerManager : MonoBehaviour
         else if (rigid.velocity.x < maxSpeed * (-1))
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
     }
+
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Ground"))
+        {
+            animator.SetBool("isGrounded", true);
+        }
+        if (collision.transform.CompareTag("Monster"))
+        {
+            // Physics2D.IgnoreCollsion(M)
+            if (wasHit == false)
+            {
+                health -= 33;
+                if (health <= 0)
+                {
+                    Destroy(gameObject);
+                }
+                wasHit = true;
+                StartCoroutine(invincible());
+            }
+        }
+
+    }
+
 
 }
