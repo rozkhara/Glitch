@@ -59,7 +59,7 @@ public class GM : MonoBehaviour
     {
         if (!isOnPause)
         {
-            Debug.LogError("Game is not on pause state");
+            Debug.LogError("Game is not on pause state.");
             return;
         }
         else
@@ -70,5 +70,8 @@ public class GM : MonoBehaviour
             return;
         }
     }
+
+
+
 
 }
