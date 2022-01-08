@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
+public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler, IPointerClickHandler
 {
     Vector3 initPos;
     Vector3 endPos;
+    Vector3 pointerPos;
     int initIndex;
     int endIndex;
     RectTransform rt;
@@ -36,6 +37,7 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
         else if (endPos.x >= 60 - 50 && endPos.x <= 60 + 50) j = 3;
         else if (endPos.x >= 180 - 50 && endPos.x <= 180 + 50) j = 4;
         else if (endPos.x >= 300 - 50 && endPos.x <= 300 + 50) j = 5;
+        else if (endPos.x >= 450 - 50 && endPos.x <= 450 + 50) j = -2;
         else j = -1;
         if (endPos.y <= 180 + 50 && endPos.y >= 180 - 50) i = 0;
         else if (endPos.y <= 60 + 50 && endPos.y >= 60 - 50) i = 1;
@@ -49,12 +51,36 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
         }
         else
         {
-            endIndex = i * 6 + j;
+            if (j != -2)
+            {
+                endIndex = i * 6 + j;
+            }
+            else // QA array
+            {
+                endIndex = initIndex;
+                inventoryManager.qaisEmpty[i] = false;
+                inventoryManager.CopyItemToQA(initIndex, i);
+            }
         }
         transform.position = initPos;
         if (initIndex != endIndex)
         {
             inventoryManager.SwapItem(initIndex, endIndex);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        rt = GetComponent<RectTransform>();
+        pointerPos = rt.anchoredPosition;
+        if (pointerPos.x >= 450 - 50 && pointerPos.x <= 450 + 50)
+        {
+            if (pointerPos.y <= 180 + 50 && pointerPos.y >= 180 - 50) inventoryManager.RemoveItemFromQA(0);
+            else if (pointerPos.y <= 60 + 50 && pointerPos.y >= 60 - 50) inventoryManager.RemoveItemFromQA(1);
+            else if (pointerPos.y <= -60 + 50 && pointerPos.y >= -60 - 50) inventoryManager.RemoveItemFromQA(2);
+            else if (pointerPos.y <= -180 + 50 && pointerPos.y >= -180 - 50) inventoryManager.RemoveItemFromQA(3);
+            else { };
+            
         }
     }
 
