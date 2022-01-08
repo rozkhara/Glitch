@@ -28,7 +28,6 @@ public class WeaponManager : MonoBehaviour
     {
         if (collision.transform.CompareTag("Monster"))
         {
-            Debug.Log("Slash");
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
         }
     }

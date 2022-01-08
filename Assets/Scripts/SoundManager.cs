@@ -16,6 +16,7 @@ public class SoundManager : MonoBehaviour
         if (SoundManager.instance == null)
         {
             SoundManager.instance = this;
+            GameObject.DontDestroyOnLoad(gameObject);
         }
     }
 

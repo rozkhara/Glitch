@@ -35,7 +35,6 @@ public class MonsterManager : MonoBehaviour
         var norm = (monsterPosition - playerPosition).normalized;
         if (Vector2.Distance(monsterPosition, playerPosition) <= 2.0f)
         {
-            Debug.Log("Found");
             transform.position -= norm * Time.deltaTime;
         }
 
@@ -45,8 +44,8 @@ public class MonsterManager : MonoBehaviour
     {
         if (collision.transform.CompareTag("Weapon"))
         {
-            Debug.Log("Hit");
             health -= GameObject.FindGameObjectWithTag("Weapon").GetComponentInChildren<WeaponManager>().damage;
+            Debug.Log("Monster Health : " + health);
             GameObject.FindGameObjectWithTag("Weapon").GetComponentInChildren<WeaponManager>().damage = 0;
 
             if (health <= 0)

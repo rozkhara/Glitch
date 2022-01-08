@@ -41,7 +41,7 @@ public class PlayerManager : MonoBehaviour
             if (Input.GetButtonDown("Jump"))
             {
                 //disable double jump
-                if (animator.GetBool("isGrounded"))
+                if (animator.GetBool("isGrounded") && !(animator.GetBool("isCharging")))
                 {
                     //jump physics
                     rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
@@ -61,7 +61,19 @@ public class PlayerManager : MonoBehaviour
             if (Input.GetButtonDown("Horizontal"))
             {
                 if (!animator.GetBool("isCharging"))
-                    SpriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+                {
+                    Input.GetAxisRaw("Horizontal");
+                    if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    {
+                        transform.localScale = new Vector3(-1, 1, 1);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+                        transform.localScale = new Vector3(1, 1, 1);
+                    }
+                }
+
+                //                SpriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
             }
 
             //attack
@@ -177,6 +189,7 @@ public class PlayerManager : MonoBehaviour
             if (wasHit == false)
             {
                 health -= 33;
+                Debug.Log("Player Health : " + health);
                 if (health <= 0)
                 {
                     Destroy(gameObject);
