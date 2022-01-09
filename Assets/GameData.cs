@@ -10,5 +10,6 @@ public class GameData
     public Vector3 playerScale;
     public Item[,] inventoryArray = new Item[4, 6];
     public Item[] quickAccessArray;
+    public int sceneIndex;
 
 }
