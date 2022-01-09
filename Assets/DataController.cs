@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class DataController : MonoBehaviour
 {
@@ -46,11 +47,10 @@ public class DataController : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        LoadGameData();
-        SaveGameData();
-    }
+    // private void Start()
+    // {
+
+    // }
 
     public void LoadGameData()
     {
@@ -62,7 +62,10 @@ public class DataController : MonoBehaviour
             string FromJsonData = File.ReadAllText(filePath);
             _gameData = JsonUtility.FromJson<GameData>(FromJsonData);
 
+            SceneManager.LoadScene(gameData.sceneIndex);
             GameObject.FindGameObjectWithTag("Player").transform.position = gameData.playerPos;
+            GameObject.FindGameObjectWithTag("Player").transform.localScale = gameData.playerScale;
+            // GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>().inventoryArray[0, 0] = gameData.inventoryArray[0, 0];
         }
 
         else
@@ -75,6 +78,12 @@ public class DataController : MonoBehaviour
     public void SaveGameData()
     {
         gameData.playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        gameData.playerScale = GameObject.FindGameObjectWithTag("Player").transform.localScale;
+        gameData.sceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        // gameData.inventoryArray[0, 0] = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>().inventoryArray[0, 0];
+        // //       gameData.quickAccessArray;
+
         string ToJsonData = JsonUtility.ToJson(gameData);
         string filePath = Application.persistentDataPath + GameDataFileName;
 

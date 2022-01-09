@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class PlayerManager : MonoBehaviour
@@ -10,6 +11,10 @@ public class PlayerManager : MonoBehaviour
     public float jumpPower;
     bool canDash = true;
     bool wasHit = false;
+    public bool rightWallBoost = false;
+    public bool leftWallBoost = false;
+    public Text damageText;
+    public Image damageGauge;
     Rigidbody2D rigid;
     Animator animator;
     SpriteRenderer SpriteRenderer;
@@ -30,7 +35,7 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-
+        rightWallBoost = false;
     }
 
     // Update is called once per frame
@@ -58,24 +63,34 @@ public class PlayerManager : MonoBehaviour
                 rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
             }
 
-            //move
-            if (Input.GetButtonDown("Horizontal"))
+            //turn head
+            if (!animator.GetBool("isCharging"))
             {
-                if (!animator.GetBool("isCharging"))
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
-                    Input.GetAxisRaw("Horizontal");
-                    if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    transform.localScale = new Vector3(-1, 1, 1);
+                    if (leftWallBoost == true)
                     {
-                        transform.localScale = new Vector3(-1, 1, 1);
-                    }
-                    else if (Input.GetKeyDown(KeyCode.RightArrow))
-                    {
-                        transform.localScale = new Vector3(1, 1, 1);
+                        Debug.Log("leftwallboosttrue slow");
+                        maxSpeed = 2;
+                        bool leftWallBoost = false;
                     }
                 }
-
-                //                SpriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    transform.localScale = new Vector3(1, 1, 1);
+                    if (rightWallBoost == true)
+                    {
+                        Debug.Log("rightwallboosttrue slow");
+                        maxSpeed = 2;
+                        bool rightWallBoost = false;
+                    }
+                }
             }
+
+
+
+
 
             //attack
             if (Input.GetKeyDown(KeyCode.K))
@@ -95,6 +110,8 @@ public class PlayerManager : MonoBehaviour
 
                 //damage increase while charing attack
                 GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage += Time.deltaTime * 30;
+                damageText.text = (GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage).ToString();
+                damageGauge.fillAmount = (GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage) / 100;
             }
 
             if (Input.GetKeyUp(KeyCode.K))
@@ -114,13 +131,15 @@ public class PlayerManager : MonoBehaviour
                     // transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y, 0);
 
                     //dash sideways only
-                    transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f, 0, 0);
+                    transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f * maxSpeed, 0, 0);
 
                     //dash cooltime
                     canDash = false;
                     StartCoroutine(dashCool());
                 }
             }
+
+
 
             // if (transform.position.y != 0)
             // {
@@ -157,6 +176,9 @@ public class PlayerManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         GameObject.Find("Weapon").GetComponentInChildren<BoxCollider2D>().enabled = false;
         GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage = 0f;
+        damageText.text = "";
+        damageGauge.fillAmount = (GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage) / 100;
+
     }
 
     IEnumerator invincible()
@@ -164,6 +186,16 @@ public class PlayerManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         wasHit = false;
     }
+
+    IEnumerator wallBoostSlow()
+    {
+        yield return new WaitForSeconds(2);
+        maxSpeed = 2;
+        bool leftWallBoost = false;
+        bool rightWallBoost = false;
+        Debug.Log("wallBoostSlow");
+    }
+
 
 
     void FixedUpdate()
@@ -175,6 +207,21 @@ public class PlayerManager : MonoBehaviour
             rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
         else if (rigid.velocity.x < maxSpeed * (-1))
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
+
+
+
+        // if (Input.GetKey(KeyCode.LeftArrow))
+        // {
+        //     if (leftWallBoost = true)
+        //     {
+        //         Debug.Log("leftwallboosttrue slow");
+        //         maxSpeed = 2;
+        //         bool leftWallBoost = false;
+        //     }
+        // }
+
+
+
     }
 
 
@@ -198,6 +245,48 @@ public class PlayerManager : MonoBehaviour
                 wasHit = true;
                 StartCoroutine(invincible());
             }
+        }
+
+
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Wall"))
+        {
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                maxSpeed += 1 / 32f;
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                maxSpeed += 1 / 32f;
+            }
+            // else{
+            //     maxSpeed = 2;
+            // }
+
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+
+        if (collision.transform.CompareTag("Wall"))
+        {
+            Debug.Log("Wall Exit");
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                leftWallBoost = true;
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                rightWallBoost = true;
+            }
+
+            StartCoroutine(wallBoostSlow());
+
         }
 
     }
