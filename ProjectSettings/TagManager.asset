@@ -13,6 +13,7 @@ TagManager:
   - InventoryManager
   - GameManager
   - QuickAccess
+  - Wall
   layers:
   - Default
   - TransparentFX
