@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RandomLoot : MonoBehaviour
 {
-
+    public Animator animator;
 
     //item probability in decreasing order
     public int[] woodDropTable =
@@ -36,8 +36,10 @@ public class RandomLoot : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Awake()
+    public void Awake()
     {
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
+        inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
 
         type = -1;
         tag = this.gameObject.tag;
@@ -59,31 +61,13 @@ public class RandomLoot : MonoBehaviour
             return;
         }
 
-
-
-
-    }
-
-    void Start()
-    {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
-        inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!gameManager.isOnPause)
-        {
-            //if player position is in proximity
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                CrateGive(type);
-            }
-        }
-        
+        animator = GetComponent<Animator>();
+        animator.SetBool("isOpen", false);
 
     }
+
+
+
 
     private bool CrateGive(int type)
     {
@@ -120,7 +104,7 @@ public class RandomLoot : MonoBehaviour
                     inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
-                    Destroy(this.gameObject);
+                    Destroy(this.gameObject, 1.2f);
                     return true;
                 }
                 else
@@ -163,7 +147,7 @@ public class RandomLoot : MonoBehaviour
                     inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
-                    Destroy(this.gameObject);
+                    Destroy(this.gameObject, 1.2f);
                     return true;
                 }
                 else
@@ -205,7 +189,7 @@ public class RandomLoot : MonoBehaviour
                     inventoryManager.AddItem(targetItem);
                     Debug.Log("item with weight " + weight + " has been given!");
                     total = 0;
-                    Destroy(this.gameObject);
+                    Destroy(this.gameObject, 1.2f);
                     return true;
                 }
                 else
@@ -215,10 +199,25 @@ public class RandomLoot : MonoBehaviour
             }
         }
 
-        Debug.LogError("Unspecified type of crate has been called to give, type was "+ type);
+        Debug.LogError("Unspecified type of crate has been called to give, type was " + type);
         total = 0;
         return false;
 
+
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {
+            if (!gameManager.isOnPause)
+            {
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    animator.SetBool("isOpen", true);
+                    CrateGive(type);
+                }
+            }
+        }
 
     }
 }

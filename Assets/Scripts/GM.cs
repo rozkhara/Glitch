@@ -71,7 +71,10 @@ public class GM : MonoBehaviour
         }
     }
 
-
+    public void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
 
 
 }

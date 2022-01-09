@@ -11,6 +11,9 @@ public class Inventory : MonoBehaviour
     public bool[] qaisEmpty = { true, true, true, true, true };
     public bool[,] isEmpty = { { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true } };
 
+    [SerializeField] private GameObject qaSlotPrefab;
+    public GameObject qaObject;
+
     public List<Sprite> sprites;
     private GameObject itemSlot;
     [SerializeField] private GameObject inventoryAll;
@@ -218,7 +221,10 @@ public class Inventory : MonoBehaviour
 
     public void Start()
     {
+        DontDestroyOnLoad(this.gameObject);
         GameObject tempObject = GameObject.Find("Canvas");
+        
+        
         if (tempObject != null)
         {
             canvas = tempObject.GetComponent<Canvas>();
@@ -254,7 +260,7 @@ public class Inventory : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.I))
             {
                 Destroy(instInvObj);
-                gameManager.isOnPause = false;
+                gameManager.Unpause();
                 isInvOpen = false;
             }
         }
@@ -263,7 +269,7 @@ public class Inventory : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.I))
             {
                 instInvObj = Instantiate(inventoryAll, canvas.transform);
-                gameManager.isOnPause = true;
+                gameManager.Pause();
                 isInvOpen = true;
                 itemSlot = GameObject.Find("ItemSlot");
             }
@@ -286,6 +292,11 @@ public class Inventory : MonoBehaviour
             UseItem(3);
         }
         UpdateQA();
+        GameObject tempqa = GameObject.FindGameObjectWithTag("QuickAccess");
+        if (tempqa == null && canvas != null) 
+        {
+            qaObject = Instantiate(qaSlotPrefab, canvas.transform);
+        }
     }
 
     private void UpdateSprite()

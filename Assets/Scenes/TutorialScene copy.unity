@@ -355,6 +355,7 @@ MonoBehaviour:
   GameDataFileName: GlitchData.json
   _gameData:
     playerPos: {x: 0, y: 0, z: 0}
+    playerRot: {x: 0, y: 0, z: 0}
 --- !u!1 &901319361
 GameObject:
   m_ObjectHideFlags: 0

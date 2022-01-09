@@ -10,8 +10,8 @@ public class QuickAccessSlot : MonoBehaviour
     private Inventory inventoryManager;
     public void Start()
     {
-        QAobject = GameObject.FindGameObjectWithTag("QuickAccess");
         inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
+        QAobject = inventoryManager.qaObject;
     }
 
     private void UpdateQuickAccessSlot()
@@ -76,6 +76,10 @@ public class QuickAccessSlot : MonoBehaviour
 
     public void Update()
     {
+        if (QAobject == null)
+        {
+            QAobject = inventoryManager.qaObject;
+        }
         UpdateQuickAccessSlot();
     }
 

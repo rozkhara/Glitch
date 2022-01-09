@@ -47,15 +47,21 @@ public class crateSpawn : MonoBehaviour
                 //if clearTime under something time
                 if (gameManager.clearTime <= 30.0f)
                 {
-                    Instantiate(Crates[2], transform.position, Quaternion.identity);
+                    Instantiate(Crates[2], new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                    Destroy(this.gameObject);
+
                 }
                 else if (gameManager.clearTime <= 60.0f)
                 {
-                    Instantiate(Crates[1], transform.position, Quaternion.identity);
+                    Instantiate(Crates[1], new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                    Destroy(this.gameObject);
+
                 }
                 else
                 {
-                    Instantiate(Crates[0], transform.position, Quaternion.identity);
+                    Instantiate(Crates[0], new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+                    Destroy(this.gameObject);
+
                 }
 
             }
