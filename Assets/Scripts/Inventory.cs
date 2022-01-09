@@ -27,6 +27,10 @@ public class Inventory : MonoBehaviour
             {
                 if (inventoryArray[i, j] != null && inventoryArray[i, j].type == item.type)
                 {
+                    if (inventoryArray[i, j].amount == 64)
+                    {
+                        continue;
+                    }
                     inventoryArray[i, j].amount += item.amount;
                     return;
                 }
@@ -46,6 +50,7 @@ public class Inventory : MonoBehaviour
 
             }
         }
+        Debug.LogError("Inventory is Full!");
     }
 
     public void UseItem(int index)
