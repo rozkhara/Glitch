@@ -62,6 +62,32 @@ public class Inventory : MonoBehaviour
             int i = (internalIndex - j) / 6;
             if (!qaisEmpty[index])
             {
+                switch (inventoryArray[i, j].type)
+                {
+                    case Item.Type.Potion10:
+                        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>().health += 10;
+                        break;
+                    case Item.Type.Potion30:
+                        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>().health += 30;
+                        break;
+                    case Item.Type.Potion50:
+                        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>().health += 50;
+                        break;
+                    case Item.Type.Teleport:
+
+                        break;
+                    case Item.Type.MaxHealthUp:
+
+                        break;
+                    case Item.Type.BuffPotion:
+
+                        break;
+                    default:
+                        break;
+                }
+                Debug.Log(inventoryArray[i, j].type);
+                //use item
+                //                inventoryArray[i,j]
                 inventoryArray[i, j].amount--;
                 if (inventoryArray[i, j].amount == 0)
                 {
@@ -168,7 +194,7 @@ public class Inventory : MonoBehaviour
                     itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = null;
                     itemSlot.transform.GetChild(24 + i).GetComponent<Image>().enabled = false;
                 }
-                
+
             }
             else
             {
@@ -211,7 +237,7 @@ public class Inventory : MonoBehaviour
                         default: break;
                     }
                 }
-                
+
             }
         }
     }

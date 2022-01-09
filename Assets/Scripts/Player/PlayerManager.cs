@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class PlayerManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     bool wasHit = false;
     public bool rightWallBoost = false;
     public bool leftWallBoost = false;
+    public Text damageText;
     Rigidbody2D rigid;
     Animator animator;
     SpriteRenderer SpriteRenderer;
@@ -107,6 +109,7 @@ public class PlayerManager : MonoBehaviour
 
                 //damage increase while charing attack
                 GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage += Time.deltaTime * 30;
+                damageText.text = (GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage).ToString();
             }
 
             if (Input.GetKeyUp(KeyCode.K))
@@ -126,7 +129,7 @@ public class PlayerManager : MonoBehaviour
                     // transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y, 0);
 
                     //dash sideways only
-                    transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f, 0, 0);
+                    transform.position += new Vector3(rigid.velocity.normalized.x * 0.5f*maxSpeed, 0, 0);
 
                     //dash cooltime
                     canDash = false;
@@ -171,6 +174,7 @@ public class PlayerManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         GameObject.Find("Weapon").GetComponentInChildren<BoxCollider2D>().enabled = false;
         GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage = 0f;
+                        damageText.text = "";
     }
 
     IEnumerator invincible()
@@ -248,12 +252,15 @@ public class PlayerManager : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                maxSpeed += 1;
+                maxSpeed += 1/32f;
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
+            else if (Input.GetKey(KeyCode.LeftArrow))
             {
-                maxSpeed += 1;
+                maxSpeed += 1/32f;
             }
+            // else{
+            //     maxSpeed = 2;
+            // }
 
         }
     }
