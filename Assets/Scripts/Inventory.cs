@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     public Item[,] inventoryArray = new Item[4, 6];
-    public Item[] quickAccessArray = new Item[5];
+    public Item[] quickAccessArray = new Item[4];
+    private int[] qaIndex = new int[4];
     public bool[] qaisEmpty = { true, true, true, true, true };
     public bool[,] isEmpty = { { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true }, { true, true, true, true, true, true } };
 
@@ -47,13 +48,36 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void UseItem(int i, int j)
+    public void UseItem(int index)
     {
-        inventoryArray[i, j].amount--;
-        if (inventoryArray[i, j].amount == 0)
+        if (!gameManager.isOnPause)
         {
-            isEmpty[i, j] = true;
-            inventoryArray[i, j] = null;
+            int internalIndex = qaIndex[index];
+            int j = internalIndex % 6;
+            int i = (internalIndex - j) / 6;
+            if (!qaisEmpty[index])
+            {
+                inventoryArray[i, j].amount--;
+                if (inventoryArray[i, j].amount == 0)
+                {
+                    isEmpty[i, j] = true;
+                    qaisEmpty[index] = true;
+                    inventoryArray[i, j] = null;
+                    quickAccessArray[index] = null;
+                    for (int k = 0; k < 4 && k != index; k++)
+                    {
+                        if (qaIndex[k] == qaIndex[index])
+                        {
+                            qaIndex[k] = -1;
+                            qaisEmpty[k] = true;
+                            quickAccessArray[k] = null;
+                        }
+                    }
+                    qaIndex[index] = -1;
+
+                }
+            }
+            return;
         }
         return;
     }
@@ -83,6 +107,18 @@ public class Inventory : MonoBehaviour
             isEmpty[k, l] = false;
             isEmpty[i, j] = true;
         }
+        for (int index = 0; index < 4; index++)
+        {
+            if (index1 == qaIndex[index])
+            {
+                qaIndex[index] = index2;
+            }
+            else if (index2 == qaIndex[index])
+            {
+                qaIndex[index] = index1;
+            }
+        }
+
     }
 
     /// <summary>
@@ -97,11 +133,13 @@ public class Inventory : MonoBehaviour
         Item copiedItem = inventoryArray[i, j];
         quickAccessArray[index2] = copiedItem;
         qaisEmpty[index2] = false;
+        qaIndex[index2] = index1;
     }
 
     public void RemoveItemFromQA(int index)
     {
         qaisEmpty[index] = true;
+        qaIndex[index] = -1;
     }
 
     public void UpdateQA()
@@ -113,49 +151,58 @@ public class Inventory : MonoBehaviour
                 if (quickAccessArray[i] != null)
                 {
                     quickAccessArray[i] = null;
+                    qaIndex[i] = -1;
                 }
-                //itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = "";
-                //itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = null;
-                //itemSlot.transform.GetChild(24 + i).GetComponent<Image>().enabled = false;
+                if (itemSlot != null)
+                {
+                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = "";
+                    itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = null;
+                    itemSlot.transform.GetChild(24 + i).GetComponent<Image>().enabled = false;
+                }
+                
             }
             else
             {
-                itemSlot.transform.GetChild(24 + i).GetComponent<Image>().enabled = true;
-                if (quickAccessArray[i].amount > 1)
+                if (itemSlot != null)
                 {
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = quickAccessArray[i].amount.ToString() + " ";
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().fontSize = 36;
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().color = Color.green;
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+                    itemSlot.transform.GetChild(24 + i).GetComponent<Image>().enabled = true;
+                    if (quickAccessArray[i].amount > 1)
+                    {
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = quickAccessArray[i].amount.ToString() + " ";
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().fontSize = 36;
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().color = Color.green;
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().alignment = TextAnchor.LowerRight;
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
 
+                    }
+                    else
+                    {
+                        itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = "";
+                    }
+                    switch (quickAccessArray[i].type)
+                    {
+                        case Item.Type.Potion10:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[0];
+                            break;
+                        case Item.Type.Potion30:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[1];
+                            break;
+                        case Item.Type.Potion50:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[2];
+                            break;
+                        case Item.Type.Teleport:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[3];
+                            break;
+                        case Item.Type.MaxHealthUp:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[4];
+                            break;
+                        case Item.Type.BuffPotion:
+                            itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[5];
+                            break;
+                        default: break;
+                    }
                 }
-                else
-                {
-                    itemSlot.transform.GetChild(24 + i).GetChild(0).GetComponent<Text>().text = "";
-                }
-                switch (quickAccessArray[i].type)
-                {
-                    case Item.Type.Potion10:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[0];
-                        break;
-                    case Item.Type.Potion30:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[1];
-                        break;
-                    case Item.Type.Potion50:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[2];
-                        break;
-                    case Item.Type.Teleport:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[3];
-                        break;
-                    case Item.Type.MaxHealthUp:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[4];
-                        break;
-                    case Item.Type.BuffPotion:
-                        itemSlot.transform.GetChild(24 + i).GetComponent<Image>().sprite = sprites[5];
-                        break;
-                    default: break;
-                }
+                
             }
         }
     }
@@ -212,9 +259,24 @@ public class Inventory : MonoBehaviour
                 itemSlot = GameObject.Find("ItemSlot");
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            UseItem(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            UseItem(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            UseItem(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            UseItem(3);
+        }
         UpdateQA();
-
-
     }
 
     private void UpdateSprite()

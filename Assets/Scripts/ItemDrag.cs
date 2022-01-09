@@ -12,15 +12,36 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
     int endIndex;
     RectTransform rt;
     Inventory inventoryManager;
+    private bool isDraggable;
+
     public void OnBeginDrag(PointerEventData eventData)
     {
+        rt = GetComponent<RectTransform>();
+        pointerPos = rt.anchoredPosition;
         initPos = transform.position;
-        initIndex = transform.GetSiblingIndex();
+        if (pointerPos.x >= 450 - 50 && pointerPos.x <= 450 + 50)
+        {
+            isDraggable = false;
+        }
+        else
+        {
+            initIndex = transform.GetSiblingIndex();
+            isDraggable = true;
+        }
+
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = Input.mousePosition;
+        if (isDraggable)
+        {
+            transform.position = Input.mousePosition;
+
+        }
+        else
+        {
+
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -47,25 +68,34 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
         if (i == -1 || j == -1)
         {
             endIndex = initIndex;
-
         }
         else
         {
             if (j != -2)
             {
                 endIndex = i * 6 + j;
+
             }
             else // QA array
             {
-                endIndex = initIndex;
-                inventoryManager.qaisEmpty[i] = false;
-                inventoryManager.CopyItemToQA(initIndex, i);
+                if (isDraggable)
+                {
+                    endIndex = initIndex;
+                    inventoryManager.qaisEmpty[i] = false;
+                    inventoryManager.CopyItemToQA(initIndex, i);
+
+                }
+
             }
         }
         transform.position = initPos;
+
         if (initIndex != endIndex)
         {
-            inventoryManager.SwapItem(initIndex, endIndex);
+            if (isDraggable)
+            {
+                inventoryManager.SwapItem(initIndex, endIndex);
+            }
         }
     }
 
@@ -80,7 +110,7 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
             else if (pointerPos.y <= -60 + 50 && pointerPos.y >= -60 - 50) inventoryManager.RemoveItemFromQA(2);
             else if (pointerPos.y <= -180 + 50 && pointerPos.y >= -180 - 50) inventoryManager.RemoveItemFromQA(3);
             else { };
-            
+
         }
     }
 
@@ -109,9 +139,5 @@ public class ItemDrag : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDrag
         inventoryManager = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<Inventory>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    
 }

@@ -12,6 +12,7 @@ TagManager:
   - Ground
   - InventoryManager
   - GameManager
+  - QuickAccess
   layers:
   - Default
   - TransparentFX
