@@ -21,6 +21,7 @@ public class PlayerManager : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        GameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GM>();
 
         animator.SetBool("isCharging", false);
         animator.SetBool("isMoving", false);
