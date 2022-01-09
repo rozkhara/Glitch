@@ -64,8 +64,12 @@ public class Inventory : MonoBehaviour
                     qaisEmpty[index] = true;
                     inventoryArray[i, j] = null;
                     quickAccessArray[index] = null;
-                    for (int k = 0; k < 4 && k != index; k++)
+                    for (int k = 0; k < 4; k++)
                     {
+                        if (k == index)
+                        {
+                            continue;
+                        }
                         if (qaIndex[k] == qaIndex[index])
                         {
                             qaIndex[k] = -1;
