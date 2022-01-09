@@ -19,22 +19,7 @@ public class crateSpawn : MonoBehaviour
     void Update()
     {
         
-        if(Input.GetKeyDown(KeyCode.C)){
-            gameManager.ClearTimeCheckEnd();
-            //if clearTime under something time
-            if (gameManager.clearTime <= 30.0f)
-            {
-                Instantiate(Crates[2], transform.position, Quaternion.identity);
-            }
-            else if (gameManager.clearTime <= 60.0f)
-            {
-                Instantiate(Crates[1], transform.position, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(Crates[0], transform.position, Quaternion.identity);
-            }
-        }
+
         
     }
     private void OnTriggerEnter2D(Collider2D collision)

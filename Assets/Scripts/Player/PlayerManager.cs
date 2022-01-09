@@ -44,7 +44,7 @@ public class PlayerManager : MonoBehaviour
         if (!GameManager.isOnPause)
         {
             //jump
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetKeyDown(KeyCode.X))
             {
                 //disable double jump
                 if (animator.GetBool("isGrounded") && !(animator.GetBool("isCharging")))
@@ -93,7 +93,7 @@ public class PlayerManager : MonoBehaviour
 
 
             //attack
-            if (Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 if (!animator.GetBool("isCharging"))
                 {
@@ -103,7 +103,7 @@ public class PlayerManager : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.K))
+            if (Input.GetKey(KeyCode.Z))
             {
                 //slows movement while chraging attack
                 //                rigid.velocity = new Vector2(0,0);
@@ -114,7 +114,7 @@ public class PlayerManager : MonoBehaviour
                 damageGauge.fillAmount = (GameObject.Find("Weapon").GetComponentInChildren<WeaponManager>().damage) / 100;
             }
 
-            if (Input.GetKeyUp(KeyCode.K))
+            if (Input.GetKeyUp(KeyCode.Z))
             {
                 GameObject.Find("Weapon").GetComponentInChildren<BoxCollider2D>().enabled = true;
                 StartCoroutine(wait());
@@ -123,7 +123,7 @@ public class PlayerManager : MonoBehaviour
                 animator.SetBool("isCharging", false);
             }
 
-            if (Input.GetKeyDown(KeyCode.J))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 if (canDash == true)
                 {
